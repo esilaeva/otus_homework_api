@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class StoreOrderNotFoundResponseDTO {
   
-  private Long code;
+  private long code;
   private String message;
   private String type;
   

@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
 public class OrderDTO {
   
   private Boolean complete;
-  private int id;
-  private int petId;
-  private int quantity;
+  private long id;
+  private long petId;
+  private long quantity;
   private String shipDate;
   private String status;
   

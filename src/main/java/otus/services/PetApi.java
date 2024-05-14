@@ -2,17 +2,26 @@ package otus.services;
 
 import static io.restassured.RestAssured.given;
 
+import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
+import otus.annotations.UrlPrefix;
 import otus.dto.pet.PetDTO;
 
-public class PetApi extends ServiceApi {
+@UrlPrefix("/pet")
+public class PetApi extends ServiceApiAbs {
   
-  public static final String BASE_PATH = "/pet";
+  private String findByStatus = "/findByStatus";
   
-  public ValidatableResponse addNewPet(PetDTO petDTO) {
+  public PetApi() {
+    spec = given()
+        .baseUri(getBaseUrl())
+        .contentType(ContentType.JSON);
+  }
+  
+  public void addNewPet(PetDTO petDTO) {
     
-    return given(spec)
-        .basePath(BASE_PATH)
+    given(spec)
+        .basePath(getUrlPrefix())
         .body(petDTO)
         .log().all()
         .when()
@@ -21,15 +30,41 @@ public class PetApi extends ServiceApi {
         .log().all();
   }
   
-  public ValidatableResponse addNewPetInvalidInputGetInsteadOfPost(PetDTO petDTO) {
+  public void addNewPetInvalidInputGetInsteadOfPost(PetDTO petDTO, int statusCode) {
+    
+    given(spec)
+        .basePath(getUrlPrefix())
+        .body(petDTO)
+        .log().all()
+        .when()
+        .get()
+        .then()
+        .log().all()
+        .statusCode(statusCode);
+  }
+  
+  public ValidatableResponse getListPetByStatus(String status) {
     
     return given(spec)
-        .basePath(BASE_PATH)
-        .body(petDTO)
+        .basePath(getUrlPrefix() + findByStatus)
+        .param("status", status)
         .log().all()
         .when()
         .get()
         .then()
         .log().all();
   }
+  
+  public void deletePetById(Long id) {
+    String addPath = "/";
+    
+    given(spec)
+        .basePath(getUrlPrefix() + addPath + id)
+        .log().all()
+        .when()
+        .delete()
+        .then()
+        .log().all();
+  }
+  
 }
