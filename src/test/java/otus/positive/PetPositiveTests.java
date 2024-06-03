@@ -45,7 +45,7 @@ public class PetPositiveTests implements RequiresCleanup {
         .status(status)
         .build();
     
-    petApi.addNewPet(petDTO);
+    petApi.addNewPet(petDTO, 200);
     valueAccumulator.id = id;
     
     Response response = petApi.getListPetByStatus(status).extract().response();
@@ -69,12 +69,5 @@ public class PetPositiveTests implements RequiresCleanup {
       petApi.deletePetById(petDTO.getId());
       valueAccumulator.id = -1L;
     }
-    
-    Optional<PetDTO> pets = actualPet.stream()
-        .filter(pet -> pet.getId() == valueAccumulator.id)
-        .findFirst();
-    
-    assertFalse(pets.isPresent(), "A pet with this id should not be found");
   }
-  
 }

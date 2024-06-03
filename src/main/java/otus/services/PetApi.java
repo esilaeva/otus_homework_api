@@ -18,7 +18,7 @@ public class PetApi extends ServiceApiAbs {
         .contentType(ContentType.JSON);
   }
   
-  public void addNewPet(PetDTO petDTO) {
+  public void addNewPet(PetDTO petDTO, int statusCode) {
     
     given(spec)
         .basePath(getUrlPrefix())
@@ -27,7 +27,8 @@ public class PetApi extends ServiceApiAbs {
         .when()
         .post()
         .then()
-        .log().all();
+        .log().all()
+        .statusCode(statusCode);
   }
   
   public void addNewPetInvalidInputGetInsteadOfPost(PetDTO petDTO, int statusCode) {

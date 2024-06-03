@@ -12,15 +12,20 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import otus.dto.pet.Category;
 import otus.dto.pet.PetDTO;
 import otus.extensions.ApiExtension;
+import otus.extensions.RequiresCleanup;
 import otus.services.PetApi;
+import otus.utils.ValueAccumulator;
 
 @ExtendWith(ApiExtension.class)
-public class PetNegativeTests {
+public class PetNegativeTests implements RequiresCleanup {
   
+  List<PetDTO> actualPet;
   @Inject
   private PetApi petApi;
   @Inject
   private PetDTO petDTO;
+  @Inject
+  private ValueAccumulator valueAccumulator;
   
   /* Проверка возможности добавления питомца в магазин с неверным запросом.
   Проверка:
@@ -42,12 +47,13 @@ public class PetNegativeTests {
         .build();
     
     petApi.addNewPetInvalidInputGetInsteadOfPost(petDTO, 405);
+    valueAccumulator.id = id;
     
     Response response = petApi.getListPetByStatus(status)
         .extract()
         .response();
     
-    List<PetDTO> actualPet = response.jsonPath().getList(EMPTY, PetDTO.class);
+    actualPet = response.jsonPath().getList(EMPTY, PetDTO.class);
     
     Optional<PetDTO> pets = actualPet.stream()
         .filter(pet -> pet.getId() == id)
@@ -56,4 +62,11 @@ public class PetNegativeTests {
     assertFalse(pets.isPresent(), "A pet with this ID should not be found");
   }
   
+  @Override
+  public void cleanup() {
+    if (valueAccumulator.id != -1L) {
+      petApi.deletePetById(petDTO.getId());
+      valueAccumulator.id = -1L;
+    }
+  }
 }

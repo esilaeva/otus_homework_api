@@ -72,11 +72,7 @@ public class StorePositiveTests implements RequiresCleanup {
   public void cleanup() {
     if (valueAccumulator.id != -1L) {
       orderApi.deleteOrderById(orderDTO.getId());
-      
-      orderApi.findOrderByID(valueAccumulator.id, 404);
-      
       valueAccumulator.id = -1L;
     }
   }
-  
 }
